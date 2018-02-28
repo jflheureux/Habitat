@@ -1,0 +1,28 @@
+version: 1.0.{build}
+
+branches:
+  only:
+    - appveyor-8.2.5
+
+image: Visual Studio 2017
+
+cache:
+  - packages -> **\packages.config  # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
+  - '%LocalAppData%\NuGet\Cache'    # NuGet < v3
+  - '%LocalAppData%\NuGet\v3-cache' # NuGet v3
+
+install:
+  - nuget install secure-file -ExcludeVersion
+  - secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
+
+before_build:
+  - nuget restore Habitat.sln
+
+build:
+  project: Habitat.sln
+  verbosity: minimal
+
+test:
+  assemblies:
+    only:
+      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
