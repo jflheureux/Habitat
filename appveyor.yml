@@ -13,7 +13,7 @@ cache:
 
 install:
   - nuget install secure-file -ExcludeVersion
-  - secure-file\tools\secure-file -decrypt .\appveyor\license.xml.enc -secret "%LicenseEncryptionKey%"
+  - secure-file\tools\secure-file -decrypt .\appveyor\license.xml.enc -out .\lib\license.xml -secret "%LicenseEncryptionKey%"
 
 before_build:
   - nuget restore Habitat.sln
