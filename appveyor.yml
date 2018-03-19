@@ -6,21 +6,29 @@ branches:
 
 image: Visual Studio 2017
 
+environment:
+  nodejs_version: "8"
+  nodejs_platform: "x64"
+
 cache:
-  - packages -> **\packages.config  # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
-  - '%LocalAppData%\NuGet\Cache'    # NuGet < v3
-  - '%LocalAppData%\NuGet\v3-cache' # NuGet v3
+  - packages -> **\packages.config        # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
+  - '%LocalAppData%\NuGet\Cache'          # NuGet < v3
+  - '%LocalAppData%\NuGet\v3-cache'       # NuGet v3
+  - node_modules -> package.json          # local npm modules
+  - '%APPDATA%\npm-cache' -> package.json # npm cache
 
 install:
+  - ps: Install-Product node $env:nodejs_version $env:nodejs_platform
+  - npm install
+  - npm install -g gulp
   - nuget install secure-file -ExcludeVersion
   - secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
 before_build:
-  - nuget restore Habitat.sln
+  - gulp Package-For-Courrier
+  - ps .\lib\Sitecore.Courrier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
 
-build:
-  project: Habitat.sln
-  verbosity: minimal
+build: off
 
 test:
   assemblies:

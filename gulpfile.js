@@ -72,6 +72,12 @@ gulp.task("03-Publish-All-Projects", function (callback) {
     "Publish-Project-Projects", callback);
 });
 
+gulp.task("04-Copy-Original-Config", function () {
+  console.log("Copying Original Sitecore Config Files");
+
+  return gulp.src("./originalconfig/**/*.config").pipe(gulp.dest(config.websiteRoot));
+});
+
 gulp.task("04-Apply-Xml-Transform", function () {
   var layerPathFilters = ["./src/Foundation/**/*.transform", "./src/Feature/**/*.transform", "./src/Project/**/*.transform", "!./src/**/obj/**/*.transform", "!./src/**/bin/**/*.transform"];
   return gulp.src(layerPathFilters)
@@ -354,8 +360,9 @@ gulp.task("Package-Publish", function (callback) {
 /* Remove unwanted files */
 gulp.task("Package-Prepare-Package-Files", function (callback) {
     var excludeList = [
-      config.websiteRoot + "\\bin\\{Sitecore,Lucene,Newtonsoft,System,Microsoft.Web.Infrastructure}*dll",
-      config.websiteRoot + "\\compilerconfig.json.defaults",
+      config.websiteRoot + "\\bin\\{Configy,HtmlAgilityPack,ICSharpCode.SharpZipLib,Kamsar.WebConsole,Lucene,MicroCHAP,Microsoft.Extensions.DependencyInjection,Microsoft.Web.Infrastructure,Microsoft.Web.XmlTransform,MongoDB,Newtonsoft,Rainbow,Sitecore,System,Unicorn,xunit}*{dll,pdb}",
+      config.websiteRoot + "\\bower.json",
+      config.websiteRoot + "\\compilerconfig.json*",
       config.websiteRoot + "\\packages.config",
       config.websiteRoot + "\\App_Config\\Include\\{Feature,Foundation,Project}\\*Serialization.config",
       config.websiteRoot + "\\App_Config\\Include\\{Feature,Foundation,Project}\\z.*DevSettings.config",
@@ -365,6 +372,19 @@ gulp.task("Package-Prepare-Package-Files", function (callback) {
     console.log(excludeList);
 
     return gulp.src(excludeList, { read: false }).pipe(rimraf({ force: true }));
+});
+
+/* Copy serialized items */
+gulp.task("Package-Copy-Serialized-Items", function (callback) {
+    var includeList = [
+      "./src/**/serialization/**/*.yml",
+      "./src/**/serialization/Users/**/*.yml",
+      "./src/**/serialization/Roles/**/*.yml",
+      "!./src/**/bower_components/**/*.yml"
+    ];
+    console.log(includeList);
+
+    return gulp.src(includeList).pipe(gulp.dest("./temp/Data"));
 });
 
 /* Add files to package definition */
@@ -454,6 +474,19 @@ gulp.task("Package-Enumerate-Roles", function () {
 gulp.task("Package-Clean", function (callback) {
     rimrafDir.sync(path.resolve("./temp"));
     callback();
+});
+
+/* Publish, prepare files and items for packaging using Sitecore.Courrier  */
+gulp.task("Package-For-Courrier", function (callback) {
+  runSequence(
+      "02-Nuget-Restore",
+      "Package-Clean",
+      "Package-Publish",
+      "Package-Prepare-Package-Files",
+      "Package-Copy-Serialized-Items",
+      "04-Copy-Original-Config",
+      "04-Apply-Xml-Transform",
+      callback);
 });
 
 /* Main task, generate package.xml */
