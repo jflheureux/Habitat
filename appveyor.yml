@@ -24,10 +24,10 @@ install:
   - nuget install secure-file -ExcludeVersion
   - secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
-before_build:
-  - gulp Package-Build
-
 build: off
+
+before_test:
+  - gulp Package-Build
 
 test:
   assemblies:
