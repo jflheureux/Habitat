@@ -345,9 +345,13 @@ var rimrafDir = require("rimraf");
 var rimraf = require("gulp-rimraf");
 var xmlpoke = require("xmlpoke");
 
+/* Set websiteRoot as temp */
+gulp.task("Package-Set-Temp-WebsiteRoot", function () {
+    config.websiteRoot = path.resolve("./temp");
+});
+
 /* publish files to temp location */
 gulp.task("Package-Publish", function (callback) {
-    config.websiteRoot = path.resolve("./temp");
     config.buildConfiguration = "Release";
     fs.mkdirSync(config.websiteRoot);
     runSequence(
@@ -364,6 +368,7 @@ gulp.task("Package-Prepare-Package-Files", function (callback) {
       config.websiteRoot + "\\bower.json",
       config.websiteRoot + "\\compilerconfig.json*",
       config.websiteRoot + "\\packages.config",
+      config.websiteRoot + "\\App_Config\\Include\\{Rainbow,Unicorn}*",
       config.websiteRoot + "\\App_Config\\Include\\{Feature,Foundation,Project}\\*Serialization.config",
       config.websiteRoot + "\\App_Config\\Include\\{Feature,Foundation,Project}\\z.*DevSettings.config",
       "!" + config.websiteRoot + "\\bin\\Sitecore.Support*dll",
@@ -382,9 +387,8 @@ gulp.task("Package-Copy-Serialized-Items", function (callback) {
       "./src/**/serialization/Roles/**/*.yml",
       "!./src/**/bower_components/**/*.yml"
     ];
-    console.log(includeList);
 
-    return gulp.src(includeList).pipe(gulp.dest("./temp/Data"));
+    return gulp.src(includeList).pipe(gulp.dest(config.websiteRoot + "/Data"));
 });
 
 /* Add files to package definition */
@@ -481,6 +485,7 @@ gulp.task("Package-For-Courrier", function (callback) {
   runSequence(
       "02-Nuget-Restore",
       "Package-Clean",
+      "Package-Set-Temp-WebsiteRoot",
       "Package-Publish",
       "Package-Prepare-Package-Files",
       "Package-Copy-Serialized-Items",
@@ -493,6 +498,7 @@ gulp.task("Package-For-Courrier", function (callback) {
 gulp.task("Package-Generate", function (callback) {
     runSequence(
         "Package-Clean",
+        "Package-Set-Temp-WebsiteRoot",
         "Package-Publish",
         "Package-Prepare-Package-Files",
         "Package-Enumerate-Files",
