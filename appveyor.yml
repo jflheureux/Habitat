@@ -16,6 +16,7 @@ cache:
   - '%LocalAppData%\NuGet\v3-cache'       # NuGet v3
   - node_modules -> package.json          # local npm modules
   - '%AppData%\npm-cache -> package.json' # npm cache
+  - '%AppData%\npm -> package.json'       # npm global cache
 
 install:
   - ps: Install-Product node $env:nodejs_version $env:nodejs_platform
