@@ -7,7 +7,7 @@ branches:
 image: Visual Studio 2017
 
 environment:
-  nodejs_version: "8"
+  nodejs_version: "6"
   nodejs_platform: "x64"
 
 cache:
@@ -25,12 +25,19 @@ install:
   - secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
 before_build:
-  - gulp Package-For-Courrier
-  - ps .\lib\Sitecore.Courrier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
+  - gulp Package-Build
 
 build: off
 
 test:
   assemblies:
     only:
-      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
+      - \temp\bin\Sitecore.*.Tests.dll
+
+after_test:
+  - gulp Package-Prepare-For-Courier
+  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
+
+  artifacts:
+  - path: Habitat.update
+    name: Habitat Sitecore Update Package
