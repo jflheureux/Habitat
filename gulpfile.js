@@ -480,20 +480,20 @@ gulp.task("Package-Clean", function (callback) {
     callback();
 });
 
-/* Build the project for packaging  */
-gulp.task("Package-Build", function (callback) {
+/* Build the project in debug */
+gulp.task("Package-Build-Debug", function (callback) {
   runSequence(
       "02-Nuget-Restore",
-      "Package-Clean",
-      "Package-Set-Temp-WebsiteRoot",
-      "Package-Publish",
+      "Build-Solution",
       callback);
 });
 
-/* Prepare build output files and items for packaging using Sitecore.Courier  */
-gulp.task("Package-Prepare-For-Courier", function (callback) {
+/* Build the project for packaging using Sitecore.Courier */
+gulp.task("Package-Build-Release-For-Courier", function (callback) {
   runSequence(
+      "Package-Clean",
       "Package-Set-Temp-WebsiteRoot",
+      "Package-Publish",
       "04-Copy-Original-Config",
       "04-Apply-Xml-Transform",
       "Package-Prepare-Package-Files",

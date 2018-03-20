@@ -27,7 +27,7 @@ install:
 build: off
 
 before_test:
-  - gulp Package-Build
+  - gulp Package-Build-Debug
 
 test:
   assemblies:
@@ -35,7 +35,7 @@ test:
       - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
 
 after_test:
-  - gulp Package-Prepare-For-Courier
+  - gulp Package-Build-Release-For-Courier
   - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
 
 artifacts:
