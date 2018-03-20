@@ -22,8 +22,8 @@ install:
   - ps: Install-Product node $env:nodejs_version $env:nodejs_platform
   - npm install
   - npm install -g gulp
-  - nuget install secure-file -ExcludeVersion
-  - secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
+  - nuget install secure-file -ExcludeVersion -OutputDirectory .\packages
+  - pakages\secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
 build: off
 
