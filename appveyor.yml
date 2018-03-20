@@ -38,6 +38,6 @@ after_test:
   - gulp Package-Prepare-For-Courier
   - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
 
-  artifacts:
+artifacts:
   - path: Habitat.update
     name: Habitat Sitecore Update Package
