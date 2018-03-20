@@ -23,7 +23,7 @@ install:
   - npm install
   - npm install -g gulp
   - nuget install secure-file -ExcludeVersion -OutputDirectory .\packages
-  - pakages\secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
+  - packages\secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
 build: off
 
