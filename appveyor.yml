@@ -32,7 +32,7 @@ before_test:
 test:
   assemblies:
     only:
-      - \temp\bin\Sitecore.*.Tests.dll
+      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
 
 after_test:
   - gulp Package-Prepare-For-Courier

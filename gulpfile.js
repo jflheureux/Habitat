@@ -487,8 +487,6 @@ gulp.task("Package-Build", function (callback) {
       "Package-Clean",
       "Package-Set-Temp-WebsiteRoot",
       "Package-Publish",
-      "04-Copy-Original-Config",
-      "04-Apply-Xml-Transform",
       callback);
 });
 
@@ -496,6 +494,8 @@ gulp.task("Package-Build", function (callback) {
 gulp.task("Package-Prepare-For-Courier", function (callback) {
   runSequence(
       "Package-Set-Temp-WebsiteRoot",
+      "04-Copy-Original-Config",
+      "04-Apply-Xml-Transform",
       "Package-Prepare-Package-Files",
       "Package-Copy-Serialized-Items",
       callback);
