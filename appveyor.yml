@@ -14,8 +14,8 @@ cache:
   - packages -> **\packages.config        # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
   - '%LocalAppData%\NuGet\Cache'          # NuGet < v3
   - '%LocalAppData%\NuGet\v3-cache'       # NuGet v3
-  - node_modules -> package.json          # local npm modules
-  - '%APPDATA%\npm-cache' -> package.json # npm cache
+  #- node_modules -> package.json          # local npm modules
+  #- '%APPDATA%\npm-cache' -> package.json # npm cache
 
 install:
   - ps: Install-Product node $env:nodejs_version $env:nodejs_platform
