@@ -14,7 +14,7 @@ cache:
   - packages -> **\packages.config        # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
   - '%LocalAppData%\NuGet\Cache'          # NuGet < v3
   - '%LocalAppData%\NuGet\v3-cache'       # NuGet v3
-  #- node_modules -> package.json          # local npm modules
+  - node_modules -> package.json          # local npm modules
   #- '%APPDATA%\npm-cache' -> package.json # npm cache
 
 install:
@@ -26,18 +26,18 @@ install:
 
 build: off
 
-before_test:
-  - gulp Package-Build-Debug
-
-test:
-  assemblies:
-    only:
-      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
-
-after_test:
-  - gulp Package-Build-Release-For-Courier
-  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
-
-artifacts:
-  - path: Habitat.update
-    name: Habitat Sitecore Update Package
+#before_test:
+#  - gulp Package-Build-Debug
+#
+#test:
+#  assemblies:
+#    only:
+#      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
+#
+#after_test:
+#  - gulp Package-Build-Release-For-Courier
+#  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
+#
+#artifacts:
+#  - path: Habitat.update
+#    name: Habitat Sitecore Update Package
