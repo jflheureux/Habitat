@@ -27,18 +27,27 @@ install:
 
 build: off
 
-#before_test:
-#  - gulp Package-Build-Debug
-#
-#test:
-#  assemblies:
-#    only:
-#      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
-#
-#after_test:
-#  - gulp Package-Build-Release-For-Courier
-#  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
-#
-#artifacts:
-#  - path: Habitat.update
-#    name: Habitat Sitecore Update Package
+before_test:
+  - gulp Package-Build-Debug
+
+test:
+  assemblies:
+    only:
+      - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
+
+after_test:
+  - gulp Package-Build-Release-For-Courier
+  - ps: |
+      if ($env:APPVEYOR_REPO_TAG -eq "true") {
+          # Package for production
+          $env:DEPLOY_ENVIRONMENT="production"
+      } else {
+          # Package for staging
+          $env:DEPLOY_ENVIRONMENT="staging"
+      }
+  -ps: Copy-Item -Path ".\environments\$env:DEPLOY_ENVIRONMENT\App_Config" -Destination ".\temp" -Recurse -Force
+  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
+
+artifacts:
+  - path: Habitat.update
+    name: Habitat Sitecore Update Package
