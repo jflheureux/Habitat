@@ -45,7 +45,7 @@ after_test:
           # Package for staging
           $env:DEPLOY_ENVIRONMENT="staging"
       }
-  -ps: Copy-Item -Path ".\environments\$env:DEPLOY_ENVIRONMENT\App_Config" -Destination ".\temp" -Recurse -Force
+  - ps: Copy-Item -Path ".\environments\$env:DEPLOY_ENVIRONMENT\App_Config" -Destination ".\temp" -Recurse -Force
   - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
 
 artifacts:
