@@ -19,8 +19,9 @@ if($result.StatusCode -ne 200) {
 Write-Host "Publish successful."
 
 # Cleanup
-#Write-Host "Removing package files..."
-#Remove-Item .\Habitat.update -Force
-#Remove-Item ".\InstallPackage.aspx"
-#Remove-Item ".\Publish.aspx"
-#Write-Host "Removal successful."
+Write-Host "Removing package files..."
+Remove-Item .\Habitat.update
+Remove-Item .\InstallPackage.aspx
+Remove-Item .\Publish.aspx
+Remove-Item .\deploy.ps1
+Write-Host "Removal successful."

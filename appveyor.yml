@@ -47,11 +47,11 @@ after_test:
       }
   - ps: Copy-Item -Path ".\environments\$env:DEPLOY_ENVIRONMENT\App_Config" -Destination ".\temp" -Recurse -Force
   - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
-  - 7z a Habitat.update.zip %APPVEYOR_BUILD_FOLDER%\Habitat.update %APPVEYOR_BUILD_FOLDER%\deployment\*
+  - 7z a Habitat.staging.zip %APPVEYOR_BUILD_FOLDER%\Habitat.update %APPVEYOR_BUILD_FOLDER%\deployment\staging\*
 
 artifacts:
-  - path: Habitat.update.zip
-    name: HabitatSitecoreUpdatePackage
+  - path: Habitat.staging.zip
+    name: HabitatStagingDeploymentArchive
 
 deploy:
   - provider: Environment
@@ -63,3 +63,8 @@ deploy:
     name: production
     on:
       appveyor_repo_tag: true
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: 5tB2yxNNtAeh5Qf6ElBKvUIJrRLitCLrmN82qnHGp5iRoQGud71J/EsiFy7zF61Uj18acJtOxV6dLTy+ZR95koi71iKkwNev7iLUuEmbgLE=
