@@ -54,9 +54,9 @@ after_test:
           $env:DEPLOY_ENVIRONMENT="staging"
       }
   # Build projects in release (excluding test projects) in /temp and package using Sitecore.Courier
-  - gulp Package-Generate-With-Courier --env $env:DEPLOY_ENVIRONMENT
-  # Create deployment artifact including update package and environment deployment scripts
-  - 7z a Habitat.deployment.zip %APPVEYOR_BUILD_FOLDER%\Habitat.update %APPVEYOR_BUILD_FOLDER%\deployment\$env:DEPLOY_ENVIRONMENT\*
+  - ps: gulp Package-Generate-With-Courier --env $env:DEPLOY_ENVIRONMENT
+  # Create deployment artifact including update package and environment specific deployment scripts
+  - ps: 7z a Habitat.deployment.zip $env:APPVEYOR_BUILD_FOLDER\Habitat.update $env:APPVEYOR_BUILD_FOLDER\deployment\$env:DEPLOY_ENVIRONMENT\*
 
 artifacts:
   - path: Habitat.deployment.zip

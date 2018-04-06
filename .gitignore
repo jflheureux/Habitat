@@ -27,3 +27,4 @@ temp/
 .vscode
 nCrunchTemp*.*
 Habitat.update
+Habitat.deployment.zip
