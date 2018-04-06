@@ -20,8 +20,8 @@ Write-Host "Publish successful."
 
 # Cleanup
 Write-Host "Removing package files..."
-Remove-Item .\Habitat.update
-Remove-Item .\InstallPackage.aspx
-Remove-Item .\Publish.aspx
-Remove-Item .\deploy.ps1
+Remove-Item $env:APPLICATION_PATH\Habitat.update
+Remove-Item $env:APPLICATION_PATH\InstallPackage.aspx
+Remove-Item $env:APPLICATION_PATH\Publish.aspx
+Remove-Item $env:APPLICATION_PATH\deploy.ps1
 Write-Host "Removal successful."
