@@ -344,6 +344,11 @@ var path = require("path");
 var rimrafDir = require("rimraf");
 var rimraf = require("gulp-rimraf");
 var xmlpoke = require("xmlpoke");
+var courier = require("./scripts/sitecore.courier.js");
+
+var getDeployEnvironment = function () {
+  return yargs.env ? yargs.env : "staging";
+};
 
 /* Set websiteRoot as temp */
 gulp.task("Package-Set-Temp-WebsiteRoot", function () {
@@ -480,6 +485,17 @@ gulp.task("Package-Clean", function (callback) {
     callback();
 });
 
+/* Copy deployment environment specific files */
+gulp.task("Package-Copy-Environment-Files", function() {
+  return gulp.src("./environments/" + getDeployEnvironment() + "/**")
+    .pipe(gulp.dest(config.websiteRoot));
+});
+
+/* Copy deployment environment specific files */
+gulp.task("Package-Generate-Update-Package", function(callback) {
+  courier.runner("-t " + config.websiteRoot + " -o ./Habitat.update -r", callback);
+});
+
 /* Build the project in debug */
 gulp.task("Package-Build-Debug", function (callback) {
   runSequence(
@@ -488,8 +504,8 @@ gulp.task("Package-Build-Debug", function (callback) {
       callback);
 });
 
-/* Build the project for packaging using Sitecore.Courier */
-gulp.task("Package-Build-Release-For-Courier", function (callback) {
+/* Build the project and package using Sitecore.Courier */
+gulp.task("Package-Generate-With-Courier", function (callback) {
   runSequence(
       "Package-Clean",
       "Package-Set-Temp-WebsiteRoot",
@@ -498,6 +514,8 @@ gulp.task("Package-Build-Release-For-Courier", function (callback) {
       "04-Apply-Xml-Transform",
       "Package-Prepare-Package-Files",
       "Package-Copy-Serialized-Items",
+      "Package-Copy-Environment-Files",
+      "Package-Generate-Update-Package",
       callback);
 });
 

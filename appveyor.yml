@@ -19,24 +19,32 @@ cache:
   - '%AppData%\npm -> package.json'       # npm global cache
 
 install:
+  # Install required NodeJS version for Habitat
   - ps: Install-Product node $env:nodejs_version $env:nodejs_platform
+  # Restore node modules
   - npm install
+  # Install gulp
   - npm install -g gulp
+  # Install secure-file
   - nuget install secure-file -ExcludeVersion -OutputDirectory .\packages
+  # Decrypt the encrypted Sitecore license
   - packages\secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
+# Do not build using MsBuild
 build: off
 
 before_test:
+  # Build projects in debug (including test projects)
   - gulp Package-Build-Debug
 
 test:
   assemblies:
     only:
+      # Run unit tests
       - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
 
 after_test:
-  - gulp Package-Build-Release-For-Courier
+  # Determine deployment environment
   - ps: |
       if ($env:APPVEYOR_REPO_TAG -eq "true") {
           # Package for production
@@ -45,24 +53,28 @@ after_test:
           # Package for staging
           $env:DEPLOY_ENVIRONMENT="staging"
       }
-  - ps: Copy-Item -Path ".\environments\$env:DEPLOY_ENVIRONMENT\App_Config" -Destination ".\temp" -Recurse -Force
-  - .\lib\Sitecore.Courier\Sitecore.Courier.Runner.exe -t .\temp -o .\Habitat.update -r
-  - 7z a Habitat.staging.zip %APPVEYOR_BUILD_FOLDER%\Habitat.update %APPVEYOR_BUILD_FOLDER%\deployment\staging\*
+  # Build projects in release (excluding test projects) in /temp and package using Sitecore.Courier
+  - gulp Package-Generate-With-Courier --env $env:DEPLOY_ENVIRONMENT
+  # Create deployment artifact including update package and environment deployment scripts
+  - 7z a Habitat.deployment.zip %APPVEYOR_BUILD_FOLDER%\Habitat.update %APPVEYOR_BUILD_FOLDER%\deployment\$env:DEPLOY_ENVIRONMENT\*
 
 artifacts:
-  - path: Habitat.staging.zip
-    name: HabitatStagingDeploymentArchive
+  - path: Habitat.deployment.zip
+    name: HabitatDeploymentArchive
 
-deploy:
+deploy: # Only run for staging builds
   - provider: Environment
-    name: staging
+    name: Habitat-Staging
     on:
       branch: appveyor-8.2.5
+      appveyor_repo_tag: false
 
-  - provider: Environment
-    name: production
-    on:
-      appveyor_repo_tag: true
+on_success:
+  - ps: |
+      if ($env:DEPLOY_ENVIRONMENT -eq "production") {
+          # Only run for production builds
+          Write-Host "Deploying to production..."
+      }
 
 notifications:
   - provider: Slack
