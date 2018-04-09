@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 1.0.{build}.0
 
 branches:
   only:
@@ -30,11 +30,14 @@ install:
   # Decrypt the encrypted Sitecore license
   - packages\secure-file\tools\secure-file -decrypt .\lib\license.xml.enc -secret "%LicenseEncryptionKey%"
 
-# Do not build using MsBuild
-build: off
+# Enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_file_version: "{version}"
 
-before_test:
-  # Build projects in debug (including test projects)
+# Build projects in debug (including test projects)
+build_script:
   - gulp Package-Build-Debug
 
 test:
