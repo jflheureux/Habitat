@@ -18,6 +18,15 @@ if($result.StatusCode -ne 200) {
 }
 Write-Host "Publish successful."
 
+# Prefetch home page
+Write-Host "Prefetching home page..."
+$result = Invoke-WebRequest -Uri "$env:appveyor_instance_url" -TimeoutSec 600 -OutFile ".\Prefetch-Response.log" -PassThru -UseBasicParsing
+if($result.StatusCode -ne 200) {
+    Write-Host "StatusCode: $($result.StatusCode)"
+    throw "Prefetch failed."
+}
+Write-Host "Prefetch successful."
+
 # Cleanup
 Write-Host "Removing package files..."
 Remove-Item $env:APPLICATION_PATH\Habitat.update
