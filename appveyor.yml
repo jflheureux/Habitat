@@ -9,6 +9,8 @@ image: Visual Studio 2017
 environment:
   nodejs_version: "6"
   nodejs_platform: "x64"
+  LicenseEncryptionKey:
+    secure: L5exsAkcHr1YxypYw39APVGpu6hnPTC8pzBQb+isDS5GF3zQqFZ9rpt9ZSYlEuzrjfljfkQQ8HppQfJZb3TVs+N+v3Z9mWAHoqCkaEjRk4A1GmmIFTGEKUrOe86FdBrx5Q1hRRLId5W7ZomH4CjEu2mfh2IG5kwUMSZdgGHGg+b/kF/ghlk75GPeURhJqWT/gW7IMLje2wX4amvJV2b+6VWwcpVmg0HCgd2wlk0nFtBd9DIc8YOrbwGUJd4e9KaLyw/nt3Ibw/jZU6BVzPiD4pClD8VVv5gHjmmhEoaavSrM7rsmjEPSTtgyWZK8xozInp9WL0JuAFLVqfilOnfN6Wjq0OeAQyUqiOUtPt+hK3o=
 
 cache:
   - packages -> **\packages.config        # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
