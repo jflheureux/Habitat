@@ -12,6 +12,15 @@ environment:
   LicenseEncryptionKey:
     secure: L5exsAkcHr1YxypYw39APVGpu6hnPTC8pzBQb+isDS5GF3zQqFZ9rpt9ZSYlEuzrjfljfkQQ8HppQfJZb3TVs+N+v3Z9mWAHoqCkaEjRk4A1GmmIFTGEKUrOe86FdBrx5Q1hRRLId5W7ZomH4CjEu2mfh2IG5kwUMSZdgGHGg+b/kF/ghlk75GPeURhJqWT/gW7IMLje2wX4amvJV2b+6VWwcpVmg0HCgd2wlk0nFtBd9DIc8YOrbwGUJd4e9KaLyw/nt3Ibw/jZU6BVzPiD4pClD8VVv5gHjmmhEoaavSrM7rsmjEPSTtgyWZK8xozInp9WL0JuAFLVqfilOnfN6Wjq0OeAQyUqiOUtPt+hK3o=
 
+init:
+  # Determine build/deployment environment
+  - ps: |
+      if ($env:APPVEYOR_REPO_TAG -eq "true") {
+          $env:DEPLOY_ENVIRONMENT="production"
+      } else {
+          $env:DEPLOY_ENVIRONMENT="staging"
+      }
+
 cache:
   - packages -> **\packages.config        # preserve NuGet packages in the root of build folder but will reset it if any packages.config file is modified
   - '%LocalAppData%\NuGet\Cache'          # NuGet < v3
@@ -49,16 +58,7 @@ test:
       - \src\**\Tests\bin\**\Sitecore.*.Tests.dll
 
 after_test:
-  # Determine deployment environment
-  - ps: |
-      if ($env:APPVEYOR_REPO_TAG -eq "true") {
-          # Package for production
-          $env:DEPLOY_ENVIRONMENT="production"
-      } else {
-          # Package for staging
-          $env:DEPLOY_ENVIRONMENT="staging"
-      }
-  # Build projects in release (excluding test projects) in /temp and package using Sitecore.Courier
+  # Build projects in release (excluding test projects) in /temp and package using Sitecore Courier
   - ps: gulp Package-Generate-With-Courier --env $env:DEPLOY_ENVIRONMENT
   # Create deployment artifact including update package and environment specific deployment scripts
   - ps: 7z a Habitat.deployment.zip $env:APPVEYOR_BUILD_FOLDER\Habitat.update $env:APPVEYOR_BUILD_FOLDER\deployment\$env:DEPLOY_ENVIRONMENT\*
@@ -67,19 +67,12 @@ artifacts:
   - path: Habitat.deployment.zip
     name: HabitatDeploymentArchive
 
-deploy: # Only run for staging builds
+deploy:
   - provider: Environment
     name: Habitat-Staging
     on:
       branch: appveyor-8.2.5
-      appveyor_repo_tag: false
-
-on_success:
-  - ps: |
-      if ($env:DEPLOY_ENVIRONMENT -eq "production") {
-          # Only run for production builds
-          Write-Host "Deploying to production..."
-      }
+      DEPLOY_ENVIRONMENT: staging
 
 notifications:
   - provider: Slack
