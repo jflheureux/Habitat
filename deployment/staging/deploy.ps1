@@ -1,34 +1,18 @@
-# Installation
-Write-Host "Calling package installer..."
-$url = "$env:appveyor_deployment_url/InstallPackage.aspx"
-$result = Invoke-WebRequest -Uri $url -TimeoutSec 600 -OutFile ".\InstallPackage-Response.log" -PassThru -UseBasicParsing
-if($result.StatusCode -ne 200) {
-    Write-Host "StatusCode: $($result.StatusCode)"
-    throw "Package install failed."
+function Invoke-SitecorePage($TaskName, $Url) {
+    Write-Host "Calling $TaskName..."
+    $result = Invoke-WebRequest -Uri $Url -TimeoutSec 600 -OutFile ".\$TaskName-Response.log" -PassThru -UseBasicParsing
+    if($result.StatusCode -ne 200) {
+        Write-Host "StatusCode: $($result.StatusCode)"
+        throw "$TaskName failed."
+    }
+    Write-Host "$TaskName successful."
 }
-Write-Host "Package install successful."
 
-# Publishing
-Write-Host "Calling publisher..."
-$url = "$env:appveyor_deployment_url/Publish.aspx"
-$result = Invoke-WebRequest -Uri $url -TimeoutSec 600 -OutFile ".\Publish-Response.log" -PassThru -UseBasicParsing
-if($result.StatusCode -ne 200) {
-    Write-Host "StatusCode: $($result.StatusCode)"
-    throw "Publish failed."
-}
-Write-Host "Publish successful."
+Invoke-SitecorePage -TaskName "InstallPackage" -Url "$env:appveyor_deployment_url/InstallPackage.aspx"
+Invoke-SitecorePage -TaskName "Publish" -Url $url = "$env:appveyor_deployment_url/Publish.aspx"
+Invoke-SitecorePage -TaskName "Warmup" -Url $env:appveyor_instance_url
 
-# Prefetch home page
-Write-Host "Prefetching home page..."
-$result = Invoke-WebRequest -Uri "$env:appveyor_instance_url" -TimeoutSec 600 -OutFile ".\Prefetch-Response.log" -PassThru -UseBasicParsing
-if($result.StatusCode -ne 200) {
-    Write-Host "StatusCode: $($result.StatusCode)"
-    throw "Prefetch failed."
-}
-Write-Host "Prefetch successful."
-
-# Cleanup
-Write-Host "Removing package files..."
+Write-Host "Removing deployment files..."
 Remove-Item $env:APPLICATION_PATH\Habitat.update
 Remove-Item $env:APPLICATION_PATH\InstallPackage.aspx
 Remove-Item $env:APPLICATION_PATH\Publish.aspx
