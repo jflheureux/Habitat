@@ -9,7 +9,7 @@ function Invoke-SitecorePage($TaskName, $Url) {
 }
 
 Invoke-SitecorePage -TaskName "InstallPackage" -Url "$env:appveyor_deployment_url/InstallPackage.aspx"
-Invoke-SitecorePage -TaskName "Publish" -Url $url = "$env:appveyor_deployment_url/Publish.aspx"
+Invoke-SitecorePage -TaskName "Publish" -Url "$env:appveyor_deployment_url/Publish.aspx"
 Invoke-SitecorePage -TaskName "Warmup" -Url $env:appveyor_instance_url
 
 Write-Host "Removing deployment files..."
