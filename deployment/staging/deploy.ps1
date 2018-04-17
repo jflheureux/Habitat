@@ -1,4 +1,4 @@
-function Invoke-SitecorePage($TaskName, $Url) {
+function Invoke-SitecorePage($Url, $TaskName) {
     Write-Host "Calling $TaskName..."
     $result = Invoke-WebRequest -Uri $Url -TimeoutSec 600 -OutFile ".\$TaskName-Response.log" -PassThru -UseBasicParsing
     if($result.StatusCode -ne 200) {
@@ -8,9 +8,9 @@ function Invoke-SitecorePage($TaskName, $Url) {
     Write-Host "$TaskName successful."
 }
 
-Invoke-SitecorePage -TaskName "InstallPackage" -Url "$env:appveyor_deployment_url/InstallPackage.aspx"
-Invoke-SitecorePage -TaskName "Publish" -Url "$env:appveyor_deployment_url/Publish.aspx"
-Invoke-SitecorePage -TaskName "Warmup" -Url $env:appveyor_instance_url
+Invoke-SitecorePage -Url "$env:appveyor_deployment_url/InstallPackage.aspx" -TaskName "InstallPackage"
+Invoke-SitecorePage -Url "$env:appveyor_deployment_url/Publish.aspx" -TaskName "Publish"
+Invoke-SitecorePage -Url $env:appveyor_instance_url -TaskName "Warmup"
 
 Write-Host "Removing deployment files..."
 Remove-Item $env:APPLICATION_PATH\Habitat.update
