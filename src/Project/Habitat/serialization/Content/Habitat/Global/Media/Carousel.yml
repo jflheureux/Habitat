@@ -38,11 +38,7 @@ Languages:
     - ID: "72ea8682-24d2-4beb-951c-3e2164974105"
       Hint: MediaSelector
       Type: Multilist
-      Value: |
-        {12CFA7C1-B5BD-4C99-B6F4-221423F2E0E1}
-        {69CF65FB-F46E-4038-BBFB-66695B9178E4}
-        {EC545DC1-F12B-4B22-8FEB-7F0A4211C0E8}
-        {98D1970C-E669-448F-9E2A-DE9087A46F58}
+      Value: "{12CFA7C1-B5BD-4C99-B6F4-221423F2E0E1}"
 - Language: "ja-JP"
   Fields:
   - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
